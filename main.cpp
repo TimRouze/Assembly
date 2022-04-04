@@ -1,3 +1,5 @@
+#include "bloomFilter.h"
+
 int main(int argc, char** argv){
     char ch;
     string filename, output_filename;
