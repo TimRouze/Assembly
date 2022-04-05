@@ -18,8 +18,8 @@ pair <BloomFilter, kmer> construct_index(string filename, int k, int h, int s){
             for(int i = 0; i < sequence.length() - k + 1; i++){
                 k_mer = str2num(sequence.substr(i, k));
                 n++;
-                if (!index->blocked_contains(k_mer)){
-                    index->blocked_insert(k_mer);
+                if (!index->contains(k_mer)){
+                    index->insert(k_mer);
                 }
             }
         }
@@ -46,16 +46,16 @@ vector<bool> successor(kmer k_mer, BloomFilter b_filter){
 }
 
 vector<bool> predecessor(kmer k_mer, BloomFilter b_filter){
-    vector<bool> preds(4,0);
+    vector<bool> pred(4,0);
     string next = "ACGT";
     for(int i = 0; i <= 3; i ++){
         k_mer << 2;
         k_mer += (next[i] / 2) % 4;
         if(b_filter.contains(k_mer)){
-            preds[i] = 1;
+            pred[i] = 1;
         }
     }
-    return preds;
+    return pred;
 }
 
 string build_forwards(string current_contig, kmer curr_kmer, BloomFilter index, int k){
@@ -92,9 +92,7 @@ string create_contig(string filename, int k, int h, int s){
     pair<BloomFilter, kmer> res = construct_index(filename, k, h, s);
     kmer curr_kmer = res.second;
     BloomFilter index = res.first;
-    bool still_building_forwards = true;
-    bool stillf_building_backwards = true;
-    vector<bool> succs, pred;
+
     string contig = build_backwards(kmer2str(curr_kmer, k), curr_kmer, index, k) + build_forwards(kmer2str(curr_kmer, k), curr_kmer, index, k).substr(k);
     return contig;
 }

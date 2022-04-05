@@ -33,12 +33,8 @@ public:
     //The constructor
     BloomFilter(size_t hash_func_number, size_t size);
 
-    void blocked_insert(uint64_t kmer);
-
     //To insert a k-mer in the filter
     void insert(uint64_t kmer);
-
-    bool blocked_contains(uint64_t kmer);
 
     //To check if a k-mer is already in the filter
     bool contains(uint64_t kmer);
