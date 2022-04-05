@@ -4,23 +4,33 @@ pair <BloomFilter, kmer> construct_index(string filename, int k, int h, int s){
     ifstream fasta(filename);
     BloomFilter *index = new BloomFilter(h, s);
     string sequence = "";
-    kmer first;
-	if(fasta.good()){
+    kmer first, k_mer;
+    int n = 0;
+    if (not fasta.good()) {
+		cout << "Problem with file opening" << endl;
+		exit(1);
+	}
+	else{
 		string desc;
 		while(not fasta.eof()){
 			getline(fasta, desc);
 			getline(fasta, sequence);
             for(int i = 0; i < sequence.length() - k + 1; i++){
-                kmer k_mer = str2num(sequence.substr(i, k));
+                k_mer = str2num(sequence.substr(i, k));
+                n++;
                 if(i == 0){
                     first = k_mer;
                 }
-                if (!index->contains(k_mer)){
-                    index->insert(k_mer);
+                if (!index->blocked_contains(k_mer)){
+                    index->blocked_insert(k_mer);
                 }
             }
         }
     }
+    string file = filename.substr(filename.find_last_of("/")+1, filename.length());
+    cout << file + " contains " + to_string(n) + " " + to_string(k) + "-mers."  << endl;
+    cout << "The Bloom Filter caught " + to_string(index->getN()) + " unique " + to_string(k) + "-mers." << endl;
+
     pair<BloomFilter, kmer> res (*index, first);
     return res;
 }

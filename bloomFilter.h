@@ -23,7 +23,7 @@ private:
     vector<bool> filter;
 
     //Size of the block window
-    const size_t w = 2^8;
+    const size_t w = sysconf(_SC_PAGESIZE);
 
 public:
 

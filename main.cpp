@@ -5,7 +5,7 @@ int main(int argc, char** argv){
     string filename;
     int k = 31;
 	int h = 4;
-	int s = 1000000;
+	int s = 5000000;
     while ((ch = getopt(argc, argv, "q:k:h:s")) != -1) {
 		switch (ch) {
 			case 'q': filename = optarg; break;

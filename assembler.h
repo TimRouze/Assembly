@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "bloomFilter.h"
 #include <numeric>
+#include <string>
 using namespace std;
 
 BloomFilter construct_filter(string filename);
