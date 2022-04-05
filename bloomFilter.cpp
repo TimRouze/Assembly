@@ -19,6 +19,22 @@ BloomFilter::BloomFilter(size_t hash_func_number, size_t size){
     filter = vector<bool>(size,false);
 }
 
+void BloomFilter::blocked_insert(uint64_t kmer){
+    bool first_insertion;
+    int first_index = xorshift(kmer,1) % (m - w);
+    first_insertion = !filter[first_index];
+    filter[first_index] = true;
+    for (size_t i = 2; i <= k; i++){
+        int index = first_index + xorshift(kmer,i) % w;
+        first_insertion |= !filter[index];
+        filter[index] = true;
+    }
+    if (first_insertion){
+        n++;
+    }
+}
+
+
 //To insert a k-mer in the filter
 void BloomFilter::insert(uint64_t kmer){
     for (size_t i = 0; i < k; i++){
@@ -30,7 +46,16 @@ void BloomFilter::insert(uint64_t kmer){
     }
 }
 
-//To check if a k-mer is already in the filter
+bool BloomFilter::blocked_contains(uint64_t kmer){
+    int first_index = xorshift(kmer,1) % (m - w);
+    if (!filter[first_index]) return false;
+    for (size_t i = 2; i <= k; i++){
+        int index = first_index + xorshift(kmer,i) % w;
+        if (!filter[index]) return false;
+    }
+    return true;
+}
+
 bool BloomFilter::contains(uint64_t kmer){
     for (size_t i = 0; i < k; i++){
         int index = xorshift(kmer, i) % m;
@@ -43,18 +68,25 @@ int BloomFilter::getN(){
     return n;
 }
 
-vector<string> filter(const vector<__uint128_t>& skmers, size_t k, size_t m, const vector<int>& sizes){
-    string skmer;
-    vector<string> filtered_skmers;
-    BloomFilter* b_filter = new BloomFilter(k, m);
-    for (int i = 0; i < skmers.size(); i++){
-        if (!b_filter->contains(skmers[i])){
-            b_filter->insert(skmers[i]);
-            skmer = skmer2str(skmers[i], sizes[i]);
-            filtered_skmers.push_back(skmer);
+ /*int main(){
+    ifstream fasta("Data/Sequencage1_sans_erreurs.fa");
+    BloomFilter *b = new BloomFilter(10,1000000);
+    string sequence = "";
+    int n_total_kmers = 0;
+    if(fasta.good()){
+        string desc;
+        while(not fasta.eof()){
+            getline(fasta, desc);
+            getline(fasta, sequence);
+            for(int i=0; i<sequence.length()-31+1; i++){
+                kmer k_mer = str2num(sequence.substr(i, 31));
+                n_total_kmers+=1;
+                if(!b->blocked_contains(k_mer)){
+                    b->blocked_insert(k_mer);
+                }
+            }
         }
     }
-    cout << "Input file contained " << to_string(skmers.size()) << " kmers.\n";
-    cout << "Bloom filter caught " << to_string(b_filter->getN()) << " unique kmers.\n";
-    return filtered_skmers;
-}
+    cout << "Input file contained " << to_string(n_total_kmers) << " kmers.\n";
+    cout << "Bloom filter caught " << to_string(b->getN()) << " unique kmers.\n";
+}*/
