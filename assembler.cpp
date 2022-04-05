@@ -18,9 +18,6 @@ pair <BloomFilter, kmer> construct_index(string filename, int k, int h, int s){
             for(int i = 0; i < sequence.length() - k + 1; i++){
                 k_mer = str2num(sequence.substr(i, k));
                 n++;
-                if(i == 0){
-                    first = k_mer;
-                }
                 if (!index->blocked_contains(k_mer)){
                     index->blocked_insert(k_mer);
                 }
@@ -31,7 +28,7 @@ pair <BloomFilter, kmer> construct_index(string filename, int k, int h, int s){
     cout << file + " contains " + to_string(n) + " " + to_string(k) + "-mers."  << endl;
     cout << "The Bloom Filter caught " + to_string(index->getN()) + " unique " + to_string(k) + "-mers." << endl;
 
-    pair<BloomFilter, kmer> res (*index, first);
+    pair<BloomFilter, kmer> res (*index, k_mer);
     return res;
 }
 

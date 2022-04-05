@@ -28,6 +28,7 @@ int main(int argc, char** argv){
 		if (filename != "") {
 			string contig = create_contig(filename, k, h, s);
 			cout << contig << endl;
+			cout << contig.length() << endl;
 		}
     }
     
