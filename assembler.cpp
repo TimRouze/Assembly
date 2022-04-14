@@ -92,6 +92,7 @@ string create_contig(string filename, int k, int h, int s){
     pair<BloomFilter, kmer> res = construct_index(filename, k, h, s);
     kmer curr_kmer = res.second;
     BloomFilter index = res.first;
+    cout << "Starting first contig with the following " << to_string(k) << "-mer:" << kmer2str(curr_kmer, k) << endl;
 
     string contig = build_backwards(kmer2str(curr_kmer, k), curr_kmer, index, k) + build_forwards(kmer2str(curr_kmer, k), curr_kmer, index, k).substr(k);
     return contig;
