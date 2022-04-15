@@ -19,7 +19,7 @@ int main(int argc, char** argv){
 		     << "	-q sequencing file" << endl
 		     << "	-k kmers word size (31) " << endl
 			 << "	-h number of hash function used for the bloom filter (4)" << endl
-			 << "	-s bloom filter size (1Gb)" << endl;
+			 << "	-s bloom filter size (5Gb)" << endl;
 		return 0;
 	}
 	else{
