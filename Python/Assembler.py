@@ -107,7 +107,8 @@ def multi_build_forwards(curr_kmer, index, contigs):
                 checked_kmer.append(kmer)
                 forward_contig, curr_kmer = build_forwards(kmer, index, 0)
                 if curr_kmer != None and curr_kmer not in checked_kmer:
-                    add_succs_to_check(to_test, forward_contig, curr_kmer, index)
+                    multi_build_forwards(curr_kmer, index, contigs)
+                    #add_succs_to_check(to_test, forward_contig, curr_kmer, index)
                 contigs[contig.seq].add_succ(forward_contig)
 
 def add_succs_to_check(to_test, contig, kmer, index):
