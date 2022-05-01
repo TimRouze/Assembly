@@ -4,6 +4,15 @@ class Contig:
         self.seq = seq
         self.preds = []
         self.succs = []
+        self.kmer = ""
+
+    def __init__(self, seq, kmer, is_forward):
+        self.seq = seq
+        self.kmer = kmer
+        self.is_forward = is_forward
+        self.preds = []
+        self.succs = []
+        
     
     def add_pred(self, pred):
         if type(pred) == list:
@@ -24,3 +33,6 @@ class Contig:
         else:
             if succ not in self.succs:
                     self.succs.append(succ)
+    
+    def set_kmer(self, kmer):
+        self.kmer = kmer
