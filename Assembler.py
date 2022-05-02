@@ -63,7 +63,6 @@ def build_backwards(curr_kmer, index):
     k = len(curr_kmer)
     while True:
         preds = predecessor(curr_kmer, index)
-        #print(preds)
         if sum(preds) == 1:
             for i in range(0,4):
                 if preds[i] == 1:
@@ -181,12 +180,12 @@ def assemble(filename, k):
 
 if __name__ == "__main__":
     #Command line options
-    parser = argparse.ArgumentParser(description = 'Seed and extend alignment tool.')
-    parser.add_argument('genome', help='Fasta file containing reference sequence')
+    parser = argparse.ArgumentParser(description = 'DNA assembly tool.')
+    parser.add_argument('reads', help='Fasta file containing reference sequence')
     parser.add_argument('out', help='Output file')
-    parser.add_argument('k', type=int, help='Word size of the kmers the alignment should use')
+    parser.add_argument('k', type=int, help='Word size of the kmers the assembler should use')
     args = parser.parse_args(sys.argv[1:])
-    assemble(args.genome, args.k)
+    assemble(args.reads, args.k)
     '''for key in index.keys():
         print(key, index[key])'''
     

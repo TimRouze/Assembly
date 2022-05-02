@@ -18,8 +18,8 @@ class Contig:
         if type(pred) == list:
             if len(pred) != 0:
                 for elem in pred:
-                    if pred not in self.preds:
-                        self.preds.append(pred)
+                    if elem not in self.preds:
+                        self.preds.append(elem)
         else:
             if pred not in self.preds:
                     self.preds.append(pred)
@@ -28,8 +28,8 @@ class Contig:
         if type(succ) == list:
             if len(succ) != 0:
                 for elem in succ:
-                    if succ not in self.succs:
-                        self.succs.append(succ)
+                    if elem not in self.succs:
+                        self.succs.append(elem)
         else:
             if succ not in self.succs:
                     self.succs.append(succ)
