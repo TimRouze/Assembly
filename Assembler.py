@@ -80,8 +80,8 @@ def multi_build_backwards(curr_kmer, index, contigs):
     to_test = {}
     contig, curr_kmer = build_backwards(curr_kmer, index)
     if len(contig.seq) > k:
-        if contig.seq not in contigs:
-            contigs[contig.seq] = contig
+        if contig not in contigs:
+            contigs.append(contig)
         if curr_kmer != None:
             add_preds_to_check(to_test, contig, curr_kmer, index)
     for contig in to_test.keys():
@@ -92,9 +92,9 @@ def multi_build_backwards(curr_kmer, index, contigs):
                 if curr_kmer != None and curr_kmer not in checked_kmer:
                     multi_build_backwards(curr_kmer, index, contigs)
                     #add_preds_to_check(to_test, backward_contig, curr_kmer, index)
-                contigs[contig.seq].add_pred(backward_contig)
+                contigs[contigs.index(contig)].add_pred(backward_contig)
                 if backward_contig.seq not in contigs:
-                    contigs[backward_contig.seq] = backward_contig
+                    contigs.append(backward_contig)
 
 def multi_build_forwards(curr_kmer, index, contigs):
     checked_kmer = [curr_kmer]
@@ -103,7 +103,7 @@ def multi_build_forwards(curr_kmer, index, contigs):
     contig, curr_kmer = build_forwards(curr_kmer, index, 0)
     if len(contig.seq) > k:
         if contig.seq not in contigs:
-            contigs[contig.seq] = contig
+            contigs.append(contig)
         if curr_kmer != None:
             add_succs_to_check(to_test, contig, curr_kmer, index)
     for contig in to_test.keys():
@@ -114,9 +114,9 @@ def multi_build_forwards(curr_kmer, index, contigs):
                 if curr_kmer != None and curr_kmer not in checked_kmer:
                     multi_build_forwards(curr_kmer, index, contigs)
                     #add_succs_to_check(to_test, forward_contig, curr_kmer, index)
-                contigs[contig.seq].add_succ(forward_contig)
-                if forward_contig.seq not in contigs:
-                    contigs[forward_contig.seq] = forward_contig
+                contigs[contigs.index(contig)].add_succ(forward_contig)
+                if forward_contig not in contigs:
+                    contigs.append(forward_contig)
 
 def add_succs_to_check(to_test, contig, kmer, index):
     succs = successor(kmer, index)
@@ -137,46 +137,67 @@ def add_preds_to_check(to_test, contig, kmer, index):
                 to_test[contig].append("ACTG"[i] + kmer[:len(kmer)-1])
 
 def create_contigs(index):
-    contigs = {}
+    contigs = []
     curr_kmer = list(index.keys())[0]
     multi_build_backwards(curr_kmer, index, contigs)
     multi_build_forwards(curr_kmer, index, contigs)
-    for out_key in contigs.keys():
-        for in_key in contigs.keys():
-            if contigs[out_key] in contigs[in_key].preds:
-                contigs[out_key].add_succ(contigs[in_key])
-            if contigs[out_key] in contigs[in_key].succs:
-                contigs[out_key].add_pred(contigs[in_key])
-            if contigs[out_key].kmer == contigs[in_key].kmer and contigs[out_key] != contigs[in_key]:
-                if contigs[out_key].is_forward:
-                    contigs[out_key].add_pred(contigs[in_key])
-                    contigs[in_key].add_succ(contigs[out_key])
+    for first in contigs:
+        for second in contigs:
+            if first in second.preds:
+                first.add_succ(second)
+            if first in second.succs:
+                first.add_pred(second)
+            if first.kmer == second.kmer and first != second:
+                if first.is_forward:
+                    first.add_pred(second)
+                    second.add_succ(first)
                 else:
-                    contigs[out_key].add_succ(contigs[in_key])
-                    contigs[in_key].add_pred(contigs[out_key])
+                    first.add_succ(second)
+                    second.add_pred(first)
             
     return contigs
 
 def assemble(filename, k):
     index = construct_index(filename, k)
     contigs = create_contigs(index)
-    """for key in contigs.keys():
-        print("seq: " + contigs[key].seq)
-        print("nb successors: " + str(len(contigs[key].succs)))
-        print("nb predecessors: " + str(len(contigs[key].preds)))
-    """
-    for key in contigs.keys():
+    if len(contigs) > 2:
+        contigs, cur_k = multiple_assembly(filename, contigs, k, 300)
+
+    if len(contigs) == 2:
+        LETSGO = contigs[0].seq + contigs[1].seq[cur_k:] 
+
+    print('lol' + str(len(contigs)))
+
+    for contig in contigs:
         
         print("------------------PREDECESSORS-------------")
-        for i in range(len(contigs[key].preds)):
-            print(contigs[key].preds[i].seq)
+        for i in range(len(contig.preds)):
+            print(contig.preds[i].seq)
         print("------------------CONTIG-------------------")
-        print(contigs[key].seq)
+        print(contig.seq)
         print("------------------SUCCESSORS-----------------")
-        for i in range(len(contigs[key].succs)):
-            print(contigs[key].succs[i].seq[k:])
-    
+        for i in range(len(contig.succs)):
+            print(contig.succs[i].seq[k:])
 
+    #print(LETSGO)
+
+def multiple_assembly(filename, contigs, k, k_max):
+    test = 0
+    cur_k = k
+    while cur_k*2 < k_max and len(contigs) > 2:
+        test+=1
+        print(test)
+        index = construct_index(filename, cur_k)
+        for contig in contigs:
+            if len(contig.seq) <= cur_k:
+                for i in range(len(contig.seq) - cur_k+1):
+                    if contig.seq[i:i+cur_k] in index:
+                        index[contig.seq[i:i+cur_k]] += 1
+                    else:
+                        index[str(contig.seq[i:i+cur_k])] = 1
+        cur_k = cur_k*2
+        contigs = create_contigs(index)
+    return (contigs, cur_k)
 
 if __name__ == "__main__":
     #Command line options
