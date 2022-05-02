@@ -1,11 +1,5 @@
 class Contig:
 
-    def __init__(self, seq):
-        self.seq = seq
-        self.preds = []
-        self.succs = []
-        self.kmer = ""
-
     def __init__(self, seq, kmer, is_forward):
         self.seq = seq
         self.kmer = kmer
