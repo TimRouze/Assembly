@@ -2,11 +2,10 @@
 Genome assembly project using a De Bruijn graph.
 
 ## Pre-requisites
-Requires Biopyhton and Argparse to function correctly. These are available through pip. To install them run the following commands.
+Requires Biopyhton to function correctly. It is available through pip. To install it run the following command.
 
 `pip install Biopyhton`
 
-`pip install Argparse`
 
 ## Usage 
 Assembler.py [-h] reads out k
