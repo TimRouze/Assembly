@@ -1,9 +1,11 @@
-#include "utils.h"
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <vector>
 #include <unistd.h>
+#include <stdexcept>
+#include <vector>
+
+using namespace std;
 
 class BloomFilter{
 private:
@@ -19,6 +21,9 @@ private:
 
     //The actual bloom filter
     vector<bool> filter;
+
+    //Size of the block window
+    const size_t w = sysconf(_SC_PAGESIZE);
 
 public:
 
@@ -37,5 +42,3 @@ public:
     //To get the number of k-mers in the filter
     int getN();
 };
-
-vector<string> filter(const vector<__uint128_t>& skmers, size_t k, size_t m, const vector<int>& sizes);

@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-I. -O3
-DEPS = utils.h bloomFilter.h
-OBJ = main.o bloomFilter.o utils.o 
+DEPS = utils.h bloomFilter.h assembler.h
+OBJ = main.o bloomFilter.o utils.o assembler.o
 EXEC = assembler
 
 %.o: %.c $(DEPS)
