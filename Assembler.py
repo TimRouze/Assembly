@@ -138,7 +138,18 @@ def check_codes_forward(contigs, codes, k, curr_contig, index):
     elif codes[0] == SIMPLE_PATH and codes[1] == SIMPLE_PATH and len(contigs[0]) == len(contigs[1]) and contigs[0][-k+1] == contigs[0][-k+1]:
         score1 = score_contig(contigs[0], k, index)
         score2 = score_contig(contigs[1], k, index)
-        
+        if score1 == score2:
+            return[curr_contig] + contigs
+        else:
+            s_min =  min(score1, score2)
+            s_max = max(score1, score2)
+            if s_min < s_max*0.2:
+                if s_max == score2:
+                    return [curr_contig + contigs[1][k-1:]]
+                else:
+                    return [curr_contig + contigs[0][k-1:]]
+            else:
+                return[curr_contig] + contigs
     else:
         return [curr_contig] + contigs
 
@@ -151,6 +162,21 @@ def check_codes_backward(contigs, codes, k, curr_contig, index):
     elif codes[0] != TIP and codes[1] == TIP:
         curr_contig = contigs[0][:-k+1] + curr_contig
         return [curr_contig]
+    elif codes[0] == SIMPLE_PATH and codes[1] == SIMPLE_PATH and len(contigs[0]) == len(contigs[1]) and contigs[0][-k+1] == contigs[0][-k+1]:
+        score1 = score_contig(contigs[0], k, index)
+        score2 = score_contig(contigs[1], k, index)
+        if score1 == score2:
+            return[curr_contig] + contigs
+        else:
+            s_min =  min(score1, score2)
+            s_max = max(score1, score2)
+            if s_min < s_max*0.2:
+                if s_max == score2:
+                    return [contigs[1][:-k+1] + curr_contig]
+                else:
+                    return [contigs[0][:-k+1] + curr_contig]
+            else:
+                return[curr_contig] + contigs
     else:
         return [curr_contig] + contigs
 
