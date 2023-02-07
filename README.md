@@ -15,5 +15,5 @@ Assembler.py [-h] reads out k
 <font color="red">out</font> Output file
 <font color="red">k</font> Word size of the kmers the assembler should use
 
-### Examples:
-`Assempler.py Data/Sequencage1.fa.gz out.txt 31`
+### Example:
+`Assembler.py Data/Sequencage1.fa.gz out.txt 31`
